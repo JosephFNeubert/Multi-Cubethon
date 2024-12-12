@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using PlayFab;
 using PlayFab.ClientModels;
+using Photon.Pun;
+using Photon.Realtime;
 
 public class PlayerInfo : MonoBehaviour
 {
@@ -32,6 +34,7 @@ public class PlayerInfo : MonoBehaviour
             {
                 profile = result.PlayerProfile;
                 Debug.Log("Loaded in player: " + profile.DisplayName);
+                PhotonNetwork.NickName = profile.DisplayName;
             },
             error => Debug.Log(error.ErrorMessage)
         );
