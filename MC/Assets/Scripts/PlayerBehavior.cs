@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
 
-public class PlayerBehavior : MonoBehaviour
+public class PlayerBehavior : MonoBehaviourPun
 {
     // Game Manager
     public GameBehavior gameManager;
@@ -14,12 +16,29 @@ public class PlayerBehavior : MonoBehaviour
     private bool movement = true;
     public float forwardForce = 6000f;
     public float sidewayForce = 50f;
+    public int id;
+    public Player photonPlayer;
 
     // Start is called before the first frame update
     void Start()
     {
         gameManager = GameObject.Find("Game Manager").GetComponent<GameBehavior>();
         _rb = this.GetComponent<Rigidbody>();
+    }
+
+    [PunRPC]
+    public void Initialize(Player player)
+    {
+        id = player.ActorNumber;
+        photonPlayer = player;
+
+        GameBehavior.instance.players[id - 1] = this;
+
+        if (!photonView.IsMine)
+        {
+            GetComponentInChildren<Camera>().gameObject.SetActive(false);
+            _rb.isKinematic = true;
+        }
     }
 
     // Update for physics system
